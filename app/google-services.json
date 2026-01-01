@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "42368545082",
+    "firebase_url": "https://joblink-bdbd0-default-rtdb.firebaseio.com",
+    "project_id": "joblink-bdbd0",
+    "storage_bucket": "joblink-bdbd0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:42368545082:android:a3bbbe608fc027a1dee003",
+        "android_client_info": {
+          "package_name": "com.example.joblink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCknN7FjNx7cK9Zr6KquZ1W0Ue5oZv8jFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
+        android:name=".JobLinkApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,15 +15,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Joblink">
+
+        <!-- Splash Activity - Launcher -->
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Authentication Activities -->
+        <activity android:name=".activities.LoginActivity" android:exported="false"/>
+        <activity android:name=".activities.RegisterActivity" android:exported="false"/>
+
+        <!-- Dashboard Activities -->
+        <activity android:name=".activities.SeekerDashboardActivity"
+            android:exported="false"/>
+        <activity android:name=".activities.EmployerDashboardActivity"
+            android:exported="false"/>
+        <activity android:name=".activities.AdminDashboardActivity"
+            android:exported="false"/>
+
+        <!-- Job Activities -->
+        <activity android:name=".activities.BrowseJobsActivity" android:exported="false"/>
+        <activity android:name=".activities.JobDetailsActivity" android:exported="false"/>
+        <activity android:name=".activities.EditJobActivity" android:exported="false"/>
+
+        <!-- Application Activities -->
+        <activity android:name=".activities.ApplyJobActivity" android:exported="false"/>
+        <activity android:name=".activities.MyApplicationsActivity" android:exported="false"/>
+        <activity android:name=".activities.ViewApplicationsActivity" android:exported="false"/>
     </application>
 
 </manifest>

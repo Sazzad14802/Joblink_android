@@ -3,5 +3,20 @@
     <style name="Base.Theme.Joblink" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <!-- Ensure status bar is visible and content fits below it -->
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:fitsSystemWindows">true</item>
+
+        <!-- Status bar color to match app top bar -->
+        <item name="android:statusBarColor">@color/material_dynamic_primary80</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Fullscreen theme for dashboard activities -->
+    <style name="Theme.Joblink.Fullscreen" parent="Theme.Joblink">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>
