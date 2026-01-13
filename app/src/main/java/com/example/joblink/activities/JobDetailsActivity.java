@@ -104,7 +104,7 @@ public class JobDetailsActivity extends AppCompatActivity {
     private void displayJobDetails() {
         titleText.setText(currentJob.getTitle());
         companyText.setText("Posted by: " + currentJob.getPostedByName());
-        salaryText.setText("$" + String.format(Locale.US, "%,.2f", currentJob.getSalary()) + "/year");
+        salaryText.setText("$" + String.format(Locale.US, "%,.2f", currentJob.getSalary()));
         locationText.setText(currentJob.getLocation());
         descriptionText.setText(currentJob.getDescription());
 
@@ -131,7 +131,19 @@ public class JobDetailsActivity extends AppCompatActivity {
             String userId = firebaseHelper.getCurrentUserId();
             applicationRepository.checkExistingApplication(userId, currentJob.getJobId())
                     .addOnSuccessListener(dataSnapshot -> {
+                        // Check if any of the user's applications match this specific jobId
+                        boolean alreadyApplied = false;
                         if (dataSnapshot.exists() && dataSnapshot.hasChildren()) {
+                            for (com.google.firebase.database.DataSnapshot appSnapshot : dataSnapshot.getChildren()) {
+                                String appliedJobId = appSnapshot.child("jobId").getValue(String.class);
+                                if (currentJob.getJobId().equals(appliedJobId)) {
+                                    alreadyApplied = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (alreadyApplied) {
                             applyButton.setEnabled(false);
                             applyButton.setText("Already Applied");
                         }

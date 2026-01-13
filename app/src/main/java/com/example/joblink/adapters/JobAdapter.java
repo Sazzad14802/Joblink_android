@@ -10,8 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.joblink.R;
+import com.example.joblink.models.Application;
 import com.example.joblink.models.Job;
 import com.example.joblink.models.User;
+import com.example.joblink.repositories.ApplicationRepository;
 import com.example.joblink.repositories.UserRepository;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
     private OnJobEditListener editListener;
     private OnJobDeleteListener deleteListener;
     private UserRepository userRepository;
+    private ApplicationRepository applicationRepository;
 
     public interface OnJobClickListener {
         void onJobClick(Job job);
@@ -45,6 +48,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         this.editListener = editListener;
         this.deleteListener = deleteListener;
         this.userRepository = new UserRepository();
+        this.applicationRepository = new ApplicationRepository();
     }
 
     @NonNull
@@ -111,12 +115,39 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
                 }
             }
 
-            salaryText.setText("$" + String.format(Locale.US, "%,.2f", job.getSalary()) + "/year");
+            salaryText.setText("$" + String.format(Locale.US, "%,.2f", job.getSalary()));
             locationText.setText(job.getLocation());
 
             if (isOwner) {
                 applicationsText.setVisibility(View.VISIBLE);
-                applicationsText.setText(job.getApplicationCount() + " applications");
+
+                // Fetch pending applications count
+                applicationRepository.getApplicationsByJob(job.getJobId())
+                    .addOnSuccessListener(dataSnapshot -> {
+                        int totalCount = (int) dataSnapshot.getChildrenCount();
+                        int pendingCount = 0;
+
+                        // Count pending applications
+                        for (com.google.firebase.database.DataSnapshot appSnapshot : dataSnapshot.getChildren()) {
+                            Application app = appSnapshot.getValue(Application.class);
+                            if (app != null && Application.STATUS_PENDING.equals(app.getStatus())) {
+                                pendingCount++;
+                            }
+                        }
+
+                        // Display format: "X applications" or "X applications (Y pending)"
+                        String applicationText = totalCount + " application" + (totalCount != 1 ? "s" : "");
+                        if (pendingCount > 0) {
+                            applicationText += " (" + pendingCount + " pending)";
+                        }
+                        applicationsText.setText(applicationText);
+                    })
+                    .addOnFailureListener(e -> {
+                        // Fallback to showing just the stored count
+                        applicationsText.setText(job.getApplicationCount() + " application" +
+                            (job.getApplicationCount() != 1 ? "s" : ""));
+                    });
+
                 editButton.setVisibility(View.VISIBLE);
                 deleteButton.setVisibility(View.VISIBLE);
 

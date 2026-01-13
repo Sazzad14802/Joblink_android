@@ -43,6 +43,18 @@
             app:layout_constraintTop_toBottomOf="@id/userNameText"
             app:layout_constraintStart_toStartOf="parent"/>
 
+        <Button
+            android:id="@+id/viewExperienceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            android:text="View Experience"
+            android:textSize="12sp"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:layout_constraintTop_toBottomOf="@id/userEmailText"
+            app:layout_constraintStart_toStartOf="parent"/>
+
         <TextView
             android:id="@+id/experienceText"
             android:layout_width="0dp"
@@ -50,9 +62,8 @@
             android:layout_marginTop="8dp"
             android:text="Experience details..."
             android:textSize="12sp"
-            android:maxLines="3"
-            android:ellipsize="end"
-            app:layout_constraintTop_toBottomOf="@id/userEmailText"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/viewExperienceButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

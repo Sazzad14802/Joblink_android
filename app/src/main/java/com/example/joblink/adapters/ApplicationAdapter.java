@@ -54,7 +54,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     class ApplicationViewHolder extends RecyclerView.ViewHolder {
         TextView jobTitleText, userNameText, userEmailText, statusText, dateText, experienceText;
-        Button acceptButton, rejectButton;
+        Button acceptButton, rejectButton, viewExperienceButton;
 
         public ApplicationViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,13 +66,13 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
             experienceText = itemView.findViewById(R.id.experienceText);
             acceptButton = itemView.findViewById(R.id.acceptButton);
             rejectButton = itemView.findViewById(R.id.rejectButton);
+            viewExperienceButton = itemView.findViewById(R.id.viewExperienceButton);
         }
 
         public void bind(Application application) {
             jobTitleText.setText(application.getJobTitle());
             userNameText.setText(application.getUserName());
             userEmailText.setText(application.getUserEmail());
-            experienceText.setText("Experience: " + application.getExperience());
 
             // Format date
             SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
@@ -94,8 +94,25 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                     break;
             }
 
-            // Show action buttons only for employer and pending applications
+            // Handle experience visibility for unreviewed (pending) applications
             if (isEmployerView && status.equals(Application.STATUS_PENDING)) {
+                // Show "View Experience" button for pending applications
+                viewExperienceButton.setVisibility(View.VISIBLE);
+                experienceText.setVisibility(View.GONE);
+
+                // Toggle experience visibility when button is clicked
+                viewExperienceButton.setOnClickListener(v -> {
+                    if (experienceText.getVisibility() == View.GONE) {
+                        experienceText.setText("Experience: " + application.getExperience());
+                        experienceText.setVisibility(View.VISIBLE);
+                        viewExperienceButton.setText("Hide Experience");
+                    } else {
+                        experienceText.setVisibility(View.GONE);
+                        viewExperienceButton.setText("View Experience");
+                    }
+                });
+
+                // Show action buttons for pending applications
                 acceptButton.setVisibility(View.VISIBLE);
                 rejectButton.setVisibility(View.VISIBLE);
 
@@ -111,6 +128,10 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                     }
                 });
             } else {
+                // For reviewed applications, show experience directly
+                viewExperienceButton.setVisibility(View.GONE);
+                experienceText.setText("Experience: " + application.getExperience());
+                experienceText.setVisibility(View.VISIBLE);
                 acceptButton.setVisibility(View.GONE);
                 rejectButton.setVisibility(View.GONE);
             }

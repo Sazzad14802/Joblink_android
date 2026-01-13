@@ -1,8 +1,11 @@
 package com.example.joblink.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -31,6 +34,11 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView loginLink;
     private ProgressBar progressBar;
 
+    // Password requirement indicators
+    private TextView passwordRequirementLength;
+    private TextView passwordRequirementUppercase;
+    private TextView passwordRequirementSymbol;
+
     private FirebaseHelper firebaseHelper;
     private UserRepository userRepository;
 
@@ -41,6 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         initializeViews();
         setupSpinner();
+        setupPasswordValidation();
 
         firebaseHelper = FirebaseHelper.getInstance();
         userRepository = new UserRepository();
@@ -59,6 +68,56 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
         loginLink = findViewById(R.id.loginLink);
         progressBar = findViewById(R.id.progressBar);
+
+        // Initialize password requirement indicators
+        passwordRequirementLength = findViewById(R.id.passwordRequirementLength);
+        passwordRequirementUppercase = findViewById(R.id.passwordRequirementUppercase);
+        passwordRequirementSymbol = findViewById(R.id.passwordRequirementSymbol);
+    }
+
+    private void setupPasswordValidation() {
+        passwordInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                validatePasswordRequirements(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void validatePasswordRequirements(String password) {
+        // Check minimum length (6 characters)
+        boolean hasMinLength = password.length() >= 6;
+        updateRequirementIndicator(passwordRequirementLength, hasMinLength,
+                "✓ At least 6 characters", "✗ At least 6 characters");
+
+        // Check uppercase letter
+        boolean hasUppercase = password.matches(".*[A-Z].*");
+        updateRequirementIndicator(passwordRequirementUppercase, hasUppercase,
+                "✓ One uppercase letter", "✗ One uppercase letter");
+
+        // Check symbol
+        boolean hasSymbol = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
+        updateRequirementIndicator(passwordRequirementSymbol, hasSymbol,
+                "✓ One symbol (!@#$%^&*)", "✗ One symbol (!@#$%^&*)");
+    }
+
+    private void updateRequirementIndicator(TextView textView, boolean isMet,
+                                           String metText, String notMetText) {
+        if (isMet) {
+            textView.setText(metText);
+            textView.setTextColor(Color.parseColor("#4CAF50")); // Green color
+        } else {
+            textView.setText(notMetText);
+            textView.setTextColor(Color.parseColor("#F44336")); // Red color
+        }
     }
 
     private void setupSpinner() {
@@ -122,6 +181,18 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (password.length() < 6) {
             passwordInput.setError("Password must be at least 6 characters");
+            passwordInput.requestFocus();
+            return;
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            passwordInput.setError("Password must contain at least one uppercase letter");
+            passwordInput.requestFocus();
+            return;
+        }
+
+        if (!password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
+            passwordInput.setError("Password must contain at least one symbol");
             passwordInput.requestFocus();
             return;
         }

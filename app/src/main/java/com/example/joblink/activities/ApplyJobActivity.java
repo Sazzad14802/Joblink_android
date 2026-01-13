@@ -83,7 +83,19 @@ public class ApplyJobActivity extends AppCompatActivity {
         // Check if already applied
         applicationRepository.checkExistingApplication(userId, jobId)
                 .addOnSuccessListener(dataSnapshot -> {
+                    // Check if any of the user's applications match this specific jobId
+                    boolean alreadyApplied = false;
                     if (dataSnapshot.exists() && dataSnapshot.hasChildren()) {
+                        for (com.google.firebase.database.DataSnapshot appSnapshot : dataSnapshot.getChildren()) {
+                            String appliedJobId = appSnapshot.child("jobId").getValue(String.class);
+                            if (jobId.equals(appliedJobId)) {
+                                alreadyApplied = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (alreadyApplied) {
                         progressBar.setVisibility(View.GONE);
                         submitButton.setEnabled(true);
                         Toast.makeText(this, "You have already applied for this job", Toast.LENGTH_SHORT).show();
